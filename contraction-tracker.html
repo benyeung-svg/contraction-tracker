@@ -346,7 +346,7 @@ skipFaceIdBtn.addEventListener('click', proceedPastLock);
 function initLockScreen(){
   if(!webAuthnSupported){
     lockTitle.textContent = 'Face ID unavailable';
-    lockDesc.textContent = 'This browser doesn\\'t support it here — continuing without a lock.';
+    lockDesc.textContent = "This browser doesn't support it here — continuing without a lock.";
     lockActionBtn.style.display = 'none';
   } else if(getStoredCredId()){
     lockTitle.textContent = 'Unlock with Face ID';
