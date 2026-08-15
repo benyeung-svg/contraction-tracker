@@ -12,83 +12,70 @@
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#FDF6F1;
-    --pink:#F6B8C7;
-    --pink-deep:#E8849F;
-    --mint:#9FD8C4;
-    --lavender:#C9B6E4;
-    --plum:#3B2A3F;
-    --plum-soft:#7A6B7E;
-    --white:#FFFFFF;
+    --cream:#FDF6F1; --pink:#F6B8C7; --pink-deep:#E8849F; --mint:#9FD8C4;
+    --lavender:#C9B6E4; --plum:#3B2A3F; --plum-soft:#7A6B7E; --white:#FFFFFF;
     --shadow: 0 8px 24px rgba(59,42,63,0.10);
   }
   *{box-sizing:border-box;}
   html,body{ height:100%; }
   body{
-    margin:0;
-    background:var(--cream);
-    font-family:'Inter',sans-serif;
-    color:var(--plum);
-    -webkit-tap-highlight-color: transparent;
-    overflow:hidden;
+    margin:0; background:var(--cream); font-family:'Inter',sans-serif; color:var(--plum);
+    -webkit-tap-highlight-color: transparent; overflow:hidden;
   }
-  .app{ display:flex; flex-direction:column; height:100vh; height:100dvh; }
+  .centered-screen{
+    height:100vh; height:100dvh; display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .card{ background:var(--white); border-radius:22px; padding:28px 24px; box-shadow:var(--shadow); max-width:380px; width:100%; text-align:center; }
+  .card .emoji{ font-size:44px; margin-bottom:6px; }
+  .card h2{ font-family:'Quicksand',sans-serif; font-weight:700; font-size:21px; margin:4px 0 8px; }
+  .card p{ color:var(--plum-soft); font-size:13.5px; line-height:1.5; margin:0 0 20px; }
+  .card .btn{
+    width:100%; border:none; border-radius:14px; padding:15px; font-family:'Quicksand',sans-serif;
+    font-weight:700; font-size:15.5px; color:var(--white); background:var(--pink-deep); cursor:pointer;
+  }
+  .card .btn:disabled{ opacity:0.5; }
+  .card .link-btn{ background:none; border:none; color:var(--plum-soft); font-size:12.5px; text-decoration:underline; margin-top:14px; cursor:pointer; }
+  .card .status{ font-size:12.5px; margin-top:12px; min-height:16px; }
+  .card .status.err{ color:var(--pink-deep); }
+  .card .status.ok{ color:#3E8E6A; }
+  .card input[type=text], .card input[type=password]{
+    width:100%; border:2px solid #F0E4DE; border-radius:12px; padding:12px 14px;
+    font-family:'Inter',sans-serif; font-size:15px; margin-bottom:12px; background:var(--cream); color:var(--plum);
+  }
+  .card label{ display:block; text-align:left; font-family:'Quicksand',sans-serif; font-weight:600; font-size:12.5px; margin-bottom:5px; }
+  .card .hint{ font-size:11px; color:var(--plum-soft); line-height:1.5; margin:-4px 0 14px; text-align:left; }
 
-  /* Tab bar */
+  /* ===== App shell ===== */
+  .app{ display:none; flex-direction:column; height:100vh; height:100dvh; }
+  .syncbar{
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    font-size:11px; color:var(--plum-soft); padding:6px 10px;
+    background:var(--white); border-bottom:1px solid #F3E8E2; order:0; z-index:6;
+  }
+  .syncbar .dot{ width:6px; height:6px; border-radius:50%; background:var(--mint); }
+  .syncbar .dot.syncing{ background:var(--lavender); animation: blink 1s infinite; }
+  .syncbar .dot.err{ background:var(--pink-deep); }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  .syncbar button{ background:none; border:none; color:var(--pink-deep); font-size:11px; font-weight:600; text-decoration:underline; cursor:pointer; margin-left:6px; }
+
   .tabbar{
-    display:flex;
-    justify-content:space-around;
+    display:flex; justify-content:space-around;
     padding:10px 6px calc(6px + env(safe-area-inset-bottom,0px)) 6px;
-    background:var(--white);
-    box-shadow: 0 -2px 12px rgba(59,42,63,0.08);
-    order:2;
-    z-index:5;
+    background:var(--white); box-shadow: 0 -2px 12px rgba(59,42,63,0.08); order:2; z-index:5;
   }
-  .tab{
-    flex:1;
-    background:none;
-    border:none;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:2px;
-    padding:6px 4px;
-    cursor:pointer;
-    color:var(--plum-soft);
-    font-family:'Inter',sans-serif;
-  }
+  .tab{ flex:1; background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 4px; cursor:pointer; color:var(--plum-soft); font-family:'Inter',sans-serif; }
   .tab .icon{ font-size:20px; }
   .tab .lbl{ font-size:11px; font-weight:600; }
   .tab.active{ color:var(--pink-deep); }
 
-  /* Pager */
-  .pager{
-    flex:1;
-    display:flex;
-    overflow-x:auto;
-    overflow-y:hidden;
-    scroll-snap-type:x mandatory;
-    scroll-behavior:smooth;
-    order:1;
-  }
+  .pager{ flex:1; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scroll-behavior:smooth; order:1; }
   .pager::-webkit-scrollbar{ display:none; }
-  .page{
-    min-width:100%;
-    flex-shrink:0;
-    scroll-snap-align:start;
-    overflow-y:auto;
-    height:100%;
-    -webkit-overflow-scrolling: touch;
-  }
+  .page{ min-width:100%; flex-shrink:0; scroll-snap-align:start; overflow-y:auto; height:100%; -webkit-overflow-scrolling: touch; }
   .wrap{ max-width:480px; margin:0 auto; padding:24px 20px 40px; }
 
   header.pagehead{ text-align:center; margin-bottom:20px; }
-  header.pagehead h1{
-    font-family:'Quicksand',sans-serif;
-    font-weight:700;
-    font-size:24px;
-    margin:0 0 4px;
-  }
+  header.pagehead h1{ font-family:'Quicksand',sans-serif; font-weight:700; font-size:24px; margin:0 0 4px; }
   header.pagehead p{ margin:0; color:var(--plum-soft); font-size:13px; }
 
   /* ---------- PAGE 1: TIMER ---------- */
@@ -97,14 +84,10 @@
     width:210px; height:210px; border-radius:50%; border:none;
     background: radial-gradient(circle at 35% 30%, #FBD3DE, var(--pink) 70%);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    cursor:pointer; animation: breathe 4.2s ease-in-out infinite;
-    box-shadow: var(--shadow); transition: background 0.25s ease;
+    cursor:pointer; animation: breathe 4.2s ease-in-out infinite; box-shadow: var(--shadow); transition: background 0.25s ease;
   }
   .big-btn:active{ transform: scale(0.98); }
-  .big-btn.active{
-    background: radial-gradient(circle at 35% 30%, #FF9FB4, var(--pink-deep) 70%);
-    animation: pulseRing 1.5s infinite;
-  }
+  .big-btn.active{ background: radial-gradient(circle at 35% 30%, #FF9FB4, var(--pink-deep) 70%); animation: pulseRing 1.5s infinite; }
   @keyframes breathe{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.035); } }
   @keyframes pulseRing{
     0%{ box-shadow: 0 0 0 0 rgba(232,132,159,0.55), var(--shadow); }
@@ -143,75 +126,82 @@
   .progress-top .n{ font-family:'Quicksand',sans-serif; font-weight:700; color:var(--pink-deep); }
   .progress-bar{ height:8px; background:var(--cream); border-radius:8px; overflow:hidden; }
   .progress-fill{ height:100%; background:linear-gradient(90deg, var(--pink), var(--pink-deep)); border-radius:8px; transition: width 0.3s ease; }
-
   .category{ margin-bottom:18px; }
   .category h3{ font-family:'Quicksand',sans-serif; font-size:15px; margin:0 0 10px; color:var(--plum); }
   .item-list{ display:flex; flex-direction:column; gap:6px; }
-  .item{
-    display:flex; align-items:center; gap:12px;
-    background:var(--white); border-radius:12px; padding:12px 14px;
-    box-shadow: 0 2px 6px rgba(59,42,63,0.05);
-  }
-  .item input[type=checkbox]{
-    width:22px; height:22px; flex-shrink:0; accent-color:var(--pink-deep);
-  }
+  .item{ display:flex; align-items:center; gap:12px; background:var(--white); border-radius:12px; padding:12px 14px; box-shadow: 0 2px 6px rgba(59,42,63,0.05); }
+  .item input[type=checkbox]{ width:22px; height:22px; flex-shrink:0; accent-color:var(--pink-deep); }
   .item label{ flex:1; font-size:14.5px; }
   .item.checked label{ color:var(--plum-soft); text-decoration:line-through; }
   .item .rm{ background:none; border:none; color:var(--plum-soft); font-size:15px; cursor:pointer; padding:4px 6px; }
-
   .add-row{ display:flex; gap:8px; margin-top:8px; }
-  .add-row input{
-    flex:1; border:2px solid #F0E4DE; border-radius:12px; padding:10px 12px;
-    font-family:'Inter',sans-serif; font-size:14px; background:var(--white);
-  }
-  .add-row button{
-    background:var(--lavender); border:none; border-radius:12px; padding:0 16px;
-    font-family:'Quicksand',sans-serif; font-weight:700; color:var(--plum); cursor:pointer;
-  }
+  .add-row input{ flex:1; border:2px solid #F0E4DE; border-radius:12px; padding:10px 12px; font-family:'Inter',sans-serif; font-size:14px; background:var(--white); }
+  .add-row button{ background:var(--lavender); border:none; border-radius:12px; padding:0 16px; font-family:'Quicksand',sans-serif; font-weight:700; color:var(--plum); cursor:pointer; }
 
   /* ---------- PAGE 3: CONTACTS ---------- */
-  .contact-card{
-    background:var(--white); border-radius:16px; padding:16px 18px; box-shadow:var(--shadow); margin-bottom:12px;
-  }
+  .contact-card{ background:var(--white); border-radius:16px; padding:16px 18px; box-shadow:var(--shadow); margin-bottom:12px; }
   .contact-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
   .contact-name{ font-family:'Quicksand',sans-serif; font-weight:700; font-size:16px; }
   .contact-label{ font-size:12px; color:var(--plum-soft); margin-top:2px; }
   .contact-actions{ display:flex; gap:10px; }
-  .action-btn{
-    flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
-    padding:11px; border-radius:12px; font-family:'Quicksand',sans-serif; font-weight:700; font-size:14px;
-    text-decoration:none; cursor:pointer; border:none;
-  }
+  .action-btn{ flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:11px; border-radius:12px; font-family:'Quicksand',sans-serif; font-weight:700; font-size:14px; text-decoration:none; cursor:pointer; border:none; }
   .call-btn{ background:var(--mint); color:var(--plum); }
   .text-action-btn{ background:var(--lavender); color:var(--plum); }
   .contact-del{ background:none; border:none; color:var(--plum-soft); font-size:13px; cursor:pointer; text-decoration:underline; }
-
   .add-contact-card{ background:var(--white); border-radius:18px; padding:18px; box-shadow:var(--shadow); margin-bottom:20px; }
   .add-contact-card h3{ font-family:'Quicksand',sans-serif; font-size:15px; margin:0 0 12px; }
-  .add-contact-card input{
-    width:100%; border:2px solid #F0E4DE; border-radius:12px; padding:11px 13px;
-    font-family:'Inter',sans-serif; font-size:14.5px; margin-bottom:10px; background:var(--cream);
-  }
-  .add-contact-card button{
-    width:100%; border:none; border-radius:14px; padding:13px;
-    font-family:'Quicksand',sans-serif; font-weight:700; font-size:15px; color:var(--white);
-    background:var(--pink-deep); cursor:pointer;
-  }
+  .add-contact-card input{ width:100%; border:2px solid #F0E4DE; border-radius:12px; padding:11px 13px; font-family:'Inter',sans-serif; font-size:14.5px; margin-bottom:10px; background:var(--cream); }
+  .add-contact-card button{ width:100%; border:none; border-radius:14px; padding:13px; font-family:'Quicksand',sans-serif; font-weight:700; font-size:15px; color:var(--white); background:var(--pink-deep); cursor:pointer; }
   .suggested-labels{ font-size:11px; color:var(--plum-soft); margin:-4px 0 12px; line-height:1.5; }
+  .settings-gear{ position:absolute; top:8px; right:8px; background:none; border:none; font-size:16px; opacity:0.5; cursor:pointer; padding:6px; }
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="pager" id="pager">
 
+<!-- ===== LOCK SCREEN ===== -->
+<div class="centered-screen" id="lockScreen">
+  <div class="card">
+    <div class="emoji">🔐</div>
+    <h2 id="lockTitle">Unlock with Face ID</h2>
+    <p id="lockDesc">Keep this private — verify it's you to continue.</p>
+    <button class="btn" id="lockActionBtn">Unlock</button>
+    <div class="status" id="lockStatus"></div>
+    <button class="link-btn" id="skipFaceIdBtn">having trouble? skip for now</button>
+  </div>
+</div>
+
+<!-- ===== CONFIG SCREEN ===== -->
+<div class="centered-screen" id="configScreen" style="display:none;">
+  <div class="card">
+    <div class="emoji">🔗</div>
+    <h2>Connect shared storage</h2>
+    <p>So updates show up on both your phones.</p>
+    <label>GitHub username</label>
+    <input type="text" id="cfgOwner" placeholder="e.g. jsmith">
+    <label>Repository name</label>
+    <input type="text" id="cfgRepo" placeholder="e.g. maple-and-thistle-4471">
+    <label>Personal access token</label>
+    <input type="password" id="cfgToken" placeholder="ghp_...">
+    <div class="hint">Same repo and token as your update feed. Fine-grained token, scoped to this repo, with "Contents: Read and write".</div>
+    <button class="btn" id="saveConfigBtn">Save & continue</button>
+    <div class="status" id="configStatus"></div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div class="app" id="appRoot">
+  <div class="syncbar">
+    <span class="dot" id="syncDot"></span>
+    <span id="syncLabel">up to date</span>
+    <button id="syncNowBtn">sync now</button>
+    <button id="settingsBtn" style="margin-left:auto;">⚙️</button>
+  </div>
+
+  <div class="pager" id="pager">
     <!-- PAGE 1: TIMER -->
     <section class="page" id="page-0">
       <div class="wrap">
-        <header class="pagehead">
-          <h1>Contraction Tracker 💗</h1>
-          <p>Tap the circle to time each one.</p>
-        </header>
-
+        <header class="pagehead"><h1>Contraction Tracker 💗</h1><p>Tap the circle to time each one.</p></header>
         <div class="timer-stage">
           <button class="big-btn" id="bigBtn">
             <div class="label" id="btnLabel">START</div>
@@ -219,21 +209,13 @@
             <div class="sub" id="btnSub">tap when a contraction begins</div>
           </button>
         </div>
-
         <div class="stats">
           <div class="stat-card"><div class="val" id="avgDur">–</div><div class="lbl">avg length</div></div>
           <div class="stat-card"><div class="val" id="avgFreq">–</div><div class="lbl">avg apart</div></div>
           <div class="stat-card"><div class="val" id="totalCount">0</div><div class="lbl">logged</div></div>
         </div>
-
-        <div class="banner" id="callBanner">
-          <b>5-1-1 reached:</b> contractions are about 5 min apart, lasting around 1 min, for the last hour. Many providers say it's time to call — check what your provider told you to watch for.
-        </div>
-
-        <div class="history-head">
-          <h2>History</h2>
-          <button class="text-btn" id="resetBtn">clear all</button>
-        </div>
+        <div class="banner" id="callBanner"><b>5-1-1 reached:</b> contractions are about 5 min apart, lasting around 1 min, for the last hour. Many providers say it's time to call — check what your provider told you to watch for.</div>
+        <div class="history-head"><h2>History</h2><button class="text-btn" id="resetBtn">clear all</button></div>
         <div class="history-list" id="historyList"></div>
       </div>
     </section>
@@ -241,16 +223,11 @@
     <!-- PAGE 2: PACKING LIST -->
     <section class="page" id="page-1">
       <div class="wrap">
-        <header class="pagehead">
-          <h1>Hospital Bag 🧳</h1>
-          <p>Check things off as you pack</p>
-        </header>
-
+        <header class="pagehead"><h1>Hospital Bag 🧳</h1><p>Check things off as you pack</p></header>
         <div class="progress-wrap">
           <div class="progress-top"><span>Packed</span><span class="n" id="packProgressLabel">0 / 0</span></div>
           <div class="progress-bar"><div class="progress-fill" id="packProgressFill" style="width:0%"></div></div>
         </div>
-
         <div id="categoriesContainer"></div>
       </div>
     </section>
@@ -258,11 +235,7 @@
     <!-- PAGE 3: CONTACTS -->
     <section class="page" id="page-2">
       <div class="wrap">
-        <header class="pagehead">
-          <h1>Contacts 📞</h1>
-          <p>One tap to call or text</p>
-        </header>
-
+        <header class="pagehead"><h1>Contacts 📞</h1><p>One tap to call or text</p></header>
         <div class="add-contact-card">
           <h3>Add a contact</h3>
           <input type="text" id="contactName" placeholder="Name (e.g. Dr. Patel)">
@@ -271,11 +244,9 @@
           <input type="tel" id="contactPhone" placeholder="Phone number">
           <button id="addContactBtn">Add contact</button>
         </div>
-
         <div id="contactsList"></div>
       </div>
     </section>
-
   </div>
 
   <div class="tabbar">
@@ -286,25 +257,246 @@
 </div>
 
 <script>
-/* ===================== TAB / PAGER NAVIGATION ===================== */
-const pager = document.getElementById('pager');
-const tabs = document.querySelectorAll('.tab');
+/* ===================== HELPERS ===================== */
+function escapeHtml(str){ const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+function escapeAttr(str){ return String(str).replace(/'/g, "\\'"); }
+function fmtSec(totalSeconds){ const m = Math.floor(totalSeconds/60); const s = Math.floor(totalSeconds%60); return m + ':' + String(s).padStart(2,'0'); }
+function fmtClock(ts){ return new Date(ts).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}); }
+function b64EncodeUnicode(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64DecodeUnicode(str){ return decodeURIComponent(escape(atob(str))); }
+function bufToBase64url(buf){
+  const bytes = new Uint8Array(buf);
+  let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function base64urlToBuf(str){
+  str = str.replace(/-/g,'+').replace(/_/g,'/');
+  while(str.length % 4) str += '=';
+  const bin = atob(str);
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  return bytes.buffer;
+}
 
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    const idx = parseInt(tab.dataset.idx, 10);
-    pager.scrollTo({ left: idx * pager.clientWidth, behavior: 'smooth' });
+/* ===================== FACE ID LOCK ===================== */
+const FACEID_KEY = 'labor-app-faceid-cred';
+const lockScreen = document.getElementById('lockScreen');
+const lockTitle = document.getElementById('lockTitle');
+const lockDesc = document.getElementById('lockDesc');
+const lockActionBtn = document.getElementById('lockActionBtn');
+const lockStatus = document.getElementById('lockStatus');
+const skipFaceIdBtn = document.getElementById('skipFaceIdBtn');
+
+const webAuthnSupported = !!(window.PublicKeyCredential && navigator.credentials);
+
+function getStoredCredId(){ return localStorage.getItem(FACEID_KEY); }
+
+async function setupFaceId(){
+  lockStatus.textContent = ''; lockStatus.className = 'status';
+  try{
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const userId = crypto.getRandomValues(new Uint8Array(16));
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge, rp: { name: 'Labor Day Tracker' },
+        user: { id: userId, name: 'labor-app-user', displayName: 'Labor Day Tracker' },
+        pubKeyCredParams: [{ type:'public-key', alg:-7 }, { type:'public-key', alg:-257 }],
+        authenticatorSelection: { authenticatorAttachment:'platform', userVerification:'required' },
+        timeout: 60000, attestation:'none'
+      }
+    });
+    localStorage.setItem(FACEID_KEY, bufToBase64url(cred.rawId));
+    proceedPastLock();
+  }catch(e){
+    lockStatus.textContent = "Couldn't set up Face ID on this device. You can skip for now.";
+    lockStatus.className = 'status err';
+  }
+}
+
+async function unlockWithFaceId(){
+  lockStatus.textContent = ''; lockStatus.className = 'status';
+  const credId = getStoredCredId();
+  try{
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    await navigator.credentials.get({
+      publicKey: {
+        challenge,
+        allowCredentials: [{ id: base64urlToBuf(credId), type:'public-key' }],
+        userVerification:'required', timeout: 60000
+      }
+    });
+    proceedPastLock();
+  }catch(e){
+    lockStatus.textContent = "Face ID didn't match. Try again.";
+    lockStatus.className = 'status err';
+  }
+}
+
+function proceedPastLock(){
+  lockScreen.style.display = 'none';
+  showConfigOrApp();
+}
+
+lockActionBtn.addEventListener('click', () => {
+  if(getStoredCredId()) unlockWithFaceId();
+  else setupFaceId();
+});
+skipFaceIdBtn.addEventListener('click', proceedPastLock);
+
+function initLockScreen(){
+  if(!webAuthnSupported){
+    lockTitle.textContent = 'Face ID unavailable';
+    lockDesc.textContent = 'This browser doesn\\'t support it here — continuing without a lock.';
+    lockActionBtn.style.display = 'none';
+  } else if(getStoredCredId()){
+    lockTitle.textContent = 'Unlock with Face ID';
+    lockDesc.textContent = "Keep this private — verify it's you to continue.";
+    lockActionBtn.textContent = 'Unlock';
+  } else {
+    lockTitle.textContent = 'Set up Face ID';
+    lockDesc.textContent = 'Lock this app so it stays private on your phone.';
+    lockActionBtn.textContent = 'Set Up Face ID';
+  }
+}
+
+/* ===================== CONFIG (SHARED GITHUB REPO) ===================== */
+const CONFIG_KEY = 'live-blog-config'; // shared with post.html on the same origin
+const configScreen = document.getElementById('configScreen');
+const appRoot = document.getElementById('appRoot');
+
+function getConfig(){
+  try{ const raw = localStorage.getItem(CONFIG_KEY); return raw ? JSON.parse(raw) : null; }
+  catch(e){ return null; }
+}
+function setConfig(cfg){ localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
+
+function showConfigOrApp(){
+  const cfg = getConfig();
+  if(cfg && cfg.owner && cfg.repo && cfg.token){
+    configScreen.style.display = 'none';
+    launchApp();
+  } else {
+    configScreen.style.display = 'flex';
+  }
+}
+
+document.getElementById('saveConfigBtn').addEventListener('click', () => {
+  const owner = document.getElementById('cfgOwner').value.trim();
+  const repo = document.getElementById('cfgRepo').value.trim();
+  const token = document.getElementById('cfgToken').value.trim();
+  const statusEl = document.getElementById('configStatus');
+  if(!owner || !repo || !token){
+    statusEl.textContent = 'Please fill in all three fields.';
+    statusEl.className = 'status err';
+    return;
+  }
+  setConfig({ owner, repo, token });
+  configScreen.style.display = 'none';
+  launchApp();
+});
+
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  const cfg = getConfig();
+  if(cfg){
+    document.getElementById('cfgOwner').value = cfg.owner;
+    document.getElementById('cfgRepo').value = cfg.repo;
+    document.getElementById('cfgToken').value = cfg.token;
+  }
+  appRoot.style.display = 'none';
+  configScreen.style.display = 'flex';
+});
+
+/* ===================== SYNC ENGINE ===================== */
+const DATA_FILE = 'tracker-data.json';
+const defaultRemoteShape = {
+  timer: { contractions: [], activeStart: null },
+  packing: { packState: {}, customItems: {} },
+  contacts: [],
+  updatedAt: 0
+};
+let pushQueue = {};
+let pushDebounce = null;
+let pollHandle = null;
+
+function apiUrl(){ const cfg = getConfig(); return `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${DATA_FILE}`; }
+function authHeaders(){ const cfg = getConfig(); return { 'Authorization': `Bearer ${cfg.token}`, 'Accept': 'application/vnd.github+json' }; }
+
+function setSyncStatus(state, msg){
+  const dot = document.getElementById('syncDot');
+  const label = document.getElementById('syncLabel');
+  dot.className = 'dot' + (state === 'syncing' ? ' syncing' : state === 'error' ? ' err' : '');
+  if(state === 'syncing') label.textContent = 'syncing…';
+  else if(state === 'error') label.textContent = msg || 'sync error';
+  else if(state === 'offline') label.textContent = 'offline — will retry';
+  else label.textContent = 'up to date';
+}
+
+async function fetchRemoteData(){
+  const res = await fetch(apiUrl(), { headers: authHeaders() });
+  if(res.status === 404){ return { data: JSON.parse(JSON.stringify(defaultRemoteShape)), sha: null }; }
+  if(!res.ok) throw new Error('Could not reach GitHub (status ' + res.status + ')');
+  const json = await res.json();
+  let data;
+  try{ data = JSON.parse(b64DecodeUnicode(json.content)); }
+  catch(e){ data = JSON.parse(JSON.stringify(defaultRemoteShape)); }
+  return { data, sha: json.sha };
+}
+
+async function putRemoteData(data, sha){
+  const body = { message: 'Sync update', content: b64EncodeUnicode(JSON.stringify(data, null, 2)) };
+  if(sha) body.sha = sha;
+  const res = await fetch(apiUrl(), {
+    method: 'PUT', headers: { ...authHeaders(), 'Content-Type': 'application/json' }, body: JSON.stringify(body)
   });
-});
+  if(!res.ok){
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || 'GitHub rejected the write');
+  }
+}
 
-let scrollTimeout;
-pager.addEventListener('scroll', () => {
-  clearTimeout(scrollTimeout);
-  scrollTimeout = setTimeout(() => {
-    const idx = Math.round(pager.scrollLeft / pager.clientWidth);
-    tabs.forEach((t, i) => t.classList.toggle('active', i === idx));
-  }, 60);
-});
+function queuePush(domain, value){
+  pushQueue[domain] = value;
+  clearTimeout(pushDebounce);
+  pushDebounce = setTimeout(flushPush, 700);
+}
+
+async function flushPush(){
+  if(Object.keys(pushQueue).length === 0) return;
+  const toPush = pushQueue; pushQueue = {};
+  setSyncStatus('syncing');
+  try{
+    const { data, sha } = await fetchRemoteData();
+    Object.assign(data, toPush);
+    data.updatedAt = Date.now();
+    await putRemoteData(data, sha);
+    setSyncStatus('ok');
+  }catch(e){
+    setSyncStatus('error', e.message);
+    Object.assign(pushQueue, toPush);
+    setTimeout(flushPush, 5000);
+  }
+}
+
+async function pollRemote(){
+  if(!getConfig()) return;
+  try{
+    const { data } = await fetchRemoteData();
+    applyRemoteTimer(data.timer);
+    applyRemotePacking(data.packing);
+    applyRemoteContacts(data.contacts);
+    if(Object.keys(pushQueue).length === 0) setSyncStatus('ok');
+  }catch(e){
+    setSyncStatus('offline');
+  }
+}
+
+function startPolling(){
+  if(pollHandle) clearInterval(pollHandle);
+  pollHandle = setInterval(pollRemote, 12000);
+  document.addEventListener('visibilitychange', () => { if(!document.hidden) pollRemote(); });
+}
+
+document.getElementById('syncNowBtn').addEventListener('click', () => { flushPush(); pollRemote(); });
 
 /* ===================== PAGE 1: CONTRACTION TIMER ===================== */
 let contractions = [];
@@ -322,94 +514,54 @@ const totalCountEl = document.getElementById('totalCount');
 const callBanner = document.getElementById('callBanner');
 const resetBtn = document.getElementById('resetBtn');
 
-function fmtSec(totalSeconds){
-  const m = Math.floor(totalSeconds/60);
-  const s = Math.floor(totalSeconds%60);
-  return m + ':' + String(s).padStart(2,'0');
-}
-function fmtClock(ts){
-  return new Date(ts).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
-}
-
 const TIMER_KEY = 'snapshades-contraction-log';
-function saveTimerState(){
-  try{ localStorage.setItem(TIMER_KEY, JSON.stringify({ contractions, activeStart })); }
-  catch(e){ console.error('Could not save:', e); }
-}
-function loadTimerState(){
+function saveTimerCache(){ try{ localStorage.setItem(TIMER_KEY, JSON.stringify({ contractions, activeStart })); }catch(e){} }
+function loadTimerCache(){
   try{
     const raw = localStorage.getItem(TIMER_KEY);
-    if(raw){
-      const data = JSON.parse(raw);
-      contractions = data.contractions || [];
-      activeStart = data.activeStart || null;
-    }
-  }catch(e){ console.error('Could not load saved data:', e); }
+    if(raw){ const data = JSON.parse(raw); contractions = data.contractions || []; activeStart = data.activeStart || null; }
+  }catch(e){}
 }
 
-function startTicking(){
-  if(tickHandle) clearInterval(tickHandle);
-  tickHandle = setInterval(updateActiveDisplay, 250);
-  updateActiveDisplay();
-}
-function stopTicking(){
-  if(tickHandle) clearInterval(tickHandle);
-  tickHandle = null;
-}
-function updateActiveDisplay(){
-  if(!activeStart) return;
-  elapsedDisplay.textContent = fmtSec((Date.now() - activeStart)/1000);
-}
+function startTicking(){ if(tickHandle) clearInterval(tickHandle); tickHandle = setInterval(updateActiveDisplay, 250); updateActiveDisplay(); }
+function stopTicking(){ if(tickHandle) clearInterval(tickHandle); tickHandle = null; }
+function updateActiveDisplay(){ if(!activeStart) return; elapsedDisplay.textContent = fmtSec((Date.now() - activeStart)/1000); }
 
 bigBtn.addEventListener('click', () => {
   if(!activeStart){
     activeStart = Date.now();
-    bigBtn.classList.add('active');
-    btnLabel.textContent = 'STOP';
-    btnSub.textContent = 'tap when it eases off';
-    elapsedDisplay.style.display = 'block';
-    startTicking();
-    saveTimerState();
+    bigBtn.classList.add('active'); btnLabel.textContent = 'STOP'; btnSub.textContent = 'tap when it eases off';
+    elapsedDisplay.style.display = 'block'; startTicking();
   } else {
     const end = Date.now();
     contractions.unshift({ id: activeStart, start: activeStart, end });
     activeStart = null;
-    bigBtn.classList.remove('active');
-    btnLabel.textContent = 'START';
-    btnSub.textContent = 'tap when a contraction begins';
-    elapsedDisplay.style.display = 'none';
-    stopTicking();
-    renderTimer();
-    saveTimerState();
+    bigBtn.classList.remove('active'); btnLabel.textContent = 'START'; btnSub.textContent = 'tap when a contraction begins';
+    elapsedDisplay.style.display = 'none'; stopTicking(); renderTimer();
   }
+  saveTimerCache();
+  queuePush('timer', { contractions, activeStart });
 });
 
 resetBtn.addEventListener('click', () => {
   if(!confirm("Clear the whole session? This can't be undone.")) return;
-  contractions = [];
-  activeStart = null;
-  bigBtn.classList.remove('active');
-  btnLabel.textContent = 'START';
-  btnSub.textContent = 'tap when a contraction begins';
-  elapsedDisplay.style.display = 'none';
-  stopTicking();
-  renderTimer();
-  saveTimerState();
+  contractions = []; activeStart = null;
+  bigBtn.classList.remove('active'); btnLabel.textContent = 'START'; btnSub.textContent = 'tap when a contraction begins';
+  elapsedDisplay.style.display = 'none'; stopTicking(); renderTimer();
+  saveTimerCache();
+  queuePush('timer', { contractions, activeStart });
 });
 
 function deleteEntry(id){
   contractions = contractions.filter(c => c.id !== id);
-  renderTimer();
-  saveTimerState();
+  renderTimer(); saveTimerCache();
+  queuePush('timer', { contractions, activeStart });
 }
 
 function computeStats(){
   const recent = contractions.slice(0,5);
   let avgDur = '–', avgFreq = '–';
-  if(recent.length > 0){
-    const durSum = recent.reduce((a,c) => a + (c.end - c.start), 0);
-    avgDur = fmtSec(durSum / recent.length / 1000);
-  }
+  if(recent.length > 0){ const durSum = recent.reduce((a,c) => a + (c.end - c.start), 0); avgDur = fmtSec(durSum / recent.length / 1000); }
   if(recent.length > 1){
     let gapSum = 0, gapCount = 0;
     for(let i=0; i<recent.length-1; i++){ gapSum += recent[i].start - recent[i+1].start; gapCount++; }
@@ -422,11 +574,7 @@ function computeStatsFor(list){
   const durSum = list.reduce((a,c) => a + (c.end - c.start), 0);
   const avgDur = durSum / list.length / 1000;
   let avgFreq = null;
-  if(list.length > 1){
-    let gapSum = 0;
-    for(let i=0;i<list.length-1;i++) gapSum += list[i].start - list[i+1].start;
-    avgFreq = gapSum / (list.length-1) / 1000;
-  }
+  if(list.length > 1){ let gapSum = 0; for(let i=0;i<list.length-1;i++) gapSum += list[i].start - list[i+1].start; avgFreq = gapSum / (list.length-1) / 1000; }
   return {avgDur, avgFreq};
 }
 function checkFiveOneOne(){
@@ -439,89 +587,53 @@ function checkFiveOneOne(){
 
 function renderTimer(){
   const { avgDur, avgFreq } = computeStats();
-  avgDurEl.textContent = avgDur;
-  avgFreqEl.textContent = avgFreq;
-  totalCountEl.textContent = contractions.length;
+  avgDurEl.textContent = avgDur; avgFreqEl.textContent = avgFreq; totalCountEl.textContent = contractions.length;
   callBanner.classList.toggle('show', checkFiveOneOne());
-
-  if(contractions.length === 0){
-    historyList.innerHTML = '<div class="empty">No contractions logged yet — tap the circle above to start.</div>';
-    return;
-  }
+  if(contractions.length === 0){ historyList.innerHTML = '<div class="empty">No contractions logged yet — tap the circle above to start.</div>'; return; }
   historyList.innerHTML = contractions.map((c, i) => {
     const dur = fmtSec((c.end - c.start)/1000);
     let gap = '–';
     if(i < contractions.length - 1){ gap = fmtSec((c.start - contractions[i+1].start)/1000); }
-    return `
-      <div class="row">
-        <div class="time">${fmtClock(c.start)}</div>
-        <div class="mid">
-          <div><div class="n">${dur}</div><div class="t">length</div></div>
-          <div><div class="n">${gap}</div><div class="t">apart</div></div>
-        </div>
-        <button class="del-btn" onclick="deleteEntry(${c.id})">✕</button>
-      </div>
-    `;
+    return `<div class="row"><div class="time">${fmtClock(c.start)}</div><div class="mid"><div><div class="n">${dur}</div><div class="t">length</div></div><div><div class="n">${gap}</div><div class="t">apart</div></div></div><button class="del-btn" onclick="deleteEntry(${c.id})">✕</button></div>`;
   }).join('');
 }
 
-loadTimerState();
-if(activeStart){
-  bigBtn.classList.add('active');
-  btnLabel.textContent = 'STOP';
-  btnSub.textContent = 'tap when it eases off';
-  elapsedDisplay.style.display = 'block';
-  startTicking();
+function applyRemoteTimer(remoteTimer){
+  if(!remoteTimer || pushQueue.timer) return;
+  const localStr = JSON.stringify({ contractions, activeStart });
+  const remoteStr = JSON.stringify(remoteTimer);
+  if(localStr === remoteStr) return;
+  contractions = remoteTimer.contractions || [];
+  const prevActive = activeStart;
+  activeStart = remoteTimer.activeStart || null;
+  saveTimerCache(); renderTimer();
+  if(activeStart && !prevActive){
+    bigBtn.classList.add('active'); btnLabel.textContent = 'STOP'; btnSub.textContent = 'tap when it eases off'; elapsedDisplay.style.display = 'block'; startTicking();
+  } else if(!activeStart && prevActive){
+    bigBtn.classList.remove('active'); btnLabel.textContent = 'START'; btnSub.textContent = 'tap when a contraction begins'; elapsedDisplay.style.display = 'none'; stopTicking();
+  }
 }
-renderTimer();
 
 /* ===================== PAGE 2: PACKING LIST ===================== */
 const PACK_KEY = 'labor-packing-list';
 const defaultCategories = [
-  {
-    name: "For You",
-    items: ["Insurance card & photo ID", "Hospital paperwork / birth plan", "Phone charger (long cord)", "Comfy robe & going-home outfit", "Toiletries (toothbrush, contacts, glasses)", "Nursing bra & nursing pads", "Flip-flops for the shower", "Snacks for labor", "Your own pillow", "Maternity pads"]
-  },
-  {
-    name: "For Baby",
-    items: ["Going-home outfit (2 sizes)", "Swaddle blanket", "Car seat — installed in the car", "Hat & socks", "Diapers & wipes"]
-  },
-  {
-    name: "For Partner",
-    items: ["Change of clothes", "Snacks & entertainment", "Phone charger", "Cash for parking/vending", "Toiletries"]
-  },
-  {
-    name: "Paperwork & Extras",
-    items: ["Insurance card", "Driver's license / ID", "Birth plan copies", "Pediatrician info", "Camera"]
-  }
+  { name: "For You", items: ["Insurance card & photo ID", "Hospital paperwork / birth plan", "Phone charger (long cord)", "Comfy robe & going-home outfit", "Toiletries (toothbrush, contacts, glasses)", "Nursing bra & nursing pads", "Flip-flops for the shower", "Snacks for labor", "Your own pillow", "Maternity pads"] },
+  { name: "For Baby", items: ["Going-home outfit (2 sizes)", "Swaddle blanket", "Car seat — installed in the car", "Hat & socks", "Diapers & wipes"] },
+  { name: "For Partner", items: ["Change of clothes", "Snacks & entertainment", "Phone charger", "Cash for parking/vending", "Toiletries"] },
+  { name: "Paperwork & Extras", items: ["Insurance card", "Driver's license / ID", "Birth plan copies", "Pediatrician info", "Camera"] }
 ];
+let packState = {};
+let customItems = {};
 
-let packState = {}; // { "For You:Insurance card & photo ID": true, ... }
-let customItems = {}; // { "For You": ["extra item", ...] }
-
-function loadPackState(){
-  try{
-    const raw = localStorage.getItem(PACK_KEY);
-    if(raw){
-      const data = JSON.parse(raw);
-      packState = data.packState || {};
-      customItems = data.customItems || {};
-    }
-  }catch(e){ console.error('Could not load packing list:', e); }
+function savePackCache(){ try{ localStorage.setItem(PACK_KEY, JSON.stringify({ packState, customItems })); }catch(e){} }
+function loadPackCache(){
+  try{ const raw = localStorage.getItem(PACK_KEY); if(raw){ const data = JSON.parse(raw); packState = data.packState || {}; customItems = data.customItems || {}; } }catch(e){}
 }
-function savePackState(){
-  try{ localStorage.setItem(PACK_KEY, JSON.stringify({ packState, customItems })); }
-  catch(e){ console.error('Could not save packing list:', e); }
-}
-
-function allCategoryItems(cat){
-  return [...cat.items, ...(customItems[cat.name] || [])];
-}
+function allCategoryItems(cat){ return [...cat.items, ...(customItems[cat.name] || [])]; }
 
 function renderPacking(){
   const container = document.getElementById('categoriesContainer');
   let totalItems = 0, totalChecked = 0;
-
   container.innerHTML = defaultCategories.map(cat => {
     const items = allCategoryItems(cat);
     const rows = items.map(item => {
@@ -529,104 +641,58 @@ function renderPacking(){
       const checked = !!packState[key];
       totalItems++; if(checked) totalChecked++;
       const isCustom = customItems[cat.name] && customItems[cat.name].includes(item);
-      return `
-        <div class="item ${checked ? 'checked' : ''}">
-          <input type="checkbox" id="chk-${encodeURIComponent(key)}" ${checked ? 'checked' : ''} onchange="toggleItem('${escapeAttr(key)}')">
-          <label for="chk-${encodeURIComponent(key)}">${escapeHtml(item)}</label>
-          ${isCustom ? `<button class="rm" onclick="removeCustomItem('${escapeAttr(cat.name)}','${escapeAttr(item)}')">✕</button>` : ''}
-        </div>
-      `;
+      return `<div class="item ${checked ? 'checked' : ''}"><input type="checkbox" id="chk-${encodeURIComponent(key)}" ${checked ? 'checked' : ''} onchange="toggleItem('${escapeAttr(key)}')"><label for="chk-${encodeURIComponent(key)}">${escapeHtml(item)}</label>${isCustom ? `<button class="rm" onclick="removeCustomItem('${escapeAttr(cat.name)}','${escapeAttr(item)}')">✕</button>` : ''}</div>`;
     }).join('');
-
-    return `
-      <div class="category">
-        <h3>${escapeHtml(cat.name)}</h3>
-        <div class="item-list">${rows}</div>
-        <div class="add-row">
-          <input type="text" placeholder="Add your own item…" id="addinput-${encodeURIComponent(cat.name)}">
-          <button onclick="addCustomItem('${escapeAttr(cat.name)}')">Add</button>
-        </div>
-      </div>
-    `;
+    return `<div class="category"><h3>${escapeHtml(cat.name)}</h3><div class="item-list">${rows}</div><div class="add-row"><input type="text" placeholder="Add your own item…" id="addinput-${encodeURIComponent(cat.name)}"><button onclick="addCustomItem('${escapeAttr(cat.name)}')">Add</button></div></div>`;
   }).join('');
-
   document.getElementById('packProgressLabel').textContent = totalChecked + ' / ' + totalItems;
   document.getElementById('packProgressFill').style.width = (totalItems ? (totalChecked/totalItems*100) : 0) + '%';
 }
 
 function toggleItem(key){
   packState[key] = !packState[key];
-  savePackState();
-  renderPacking();
+  savePackCache(); renderPacking();
+  queuePush('packing', { packState, customItems });
 }
 function addCustomItem(catName){
   const input = document.getElementById('addinput-' + encodeURIComponent(catName));
-  const val = input.value.trim();
-  if(!val) return;
+  const val = input.value.trim(); if(!val) return;
   if(!customItems[catName]) customItems[catName] = [];
-  customItems[catName].push(val);
-  input.value = '';
-  savePackState();
-  renderPacking();
+  customItems[catName].push(val); input.value = '';
+  savePackCache(); renderPacking();
+  queuePush('packing', { packState, customItems });
 }
 function removeCustomItem(catName, item){
   customItems[catName] = (customItems[catName] || []).filter(i => i !== item);
   delete packState[catName + ':' + item];
-  savePackState();
-  renderPacking();
+  savePackCache(); renderPacking();
+  queuePush('packing', { packState, customItems });
 }
 
-function escapeHtml(str){
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+function applyRemotePacking(remotePacking){
+  if(!remotePacking || pushQueue.packing) return;
+  const localStr = JSON.stringify({ packState, customItems });
+  const remoteStr = JSON.stringify(remotePacking);
+  if(localStr === remoteStr) return;
+  packState = remotePacking.packState || {};
+  customItems = remotePacking.customItems || {};
+  savePackCache(); renderPacking();
 }
-function escapeAttr(str){
-  return String(str).replace(/'/g, "\\'");
-}
-
-loadPackState();
-renderPacking();
 
 /* ===================== PAGE 3: CONTACTS ===================== */
 const CONTACTS_KEY = 'labor-contacts';
 let contacts = [];
 
-function loadContacts(){
-  try{
-    const raw = localStorage.getItem(CONTACTS_KEY);
-    contacts = raw ? JSON.parse(raw) : [];
-  }catch(e){ contacts = []; }
-}
-function saveContacts(){
-  try{ localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts)); }
-  catch(e){ console.error('Could not save contacts:', e); }
-}
+function saveContactsCache(){ try{ localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts)); }catch(e){} }
+function loadContactsCache(){ try{ const raw = localStorage.getItem(CONTACTS_KEY); contacts = raw ? JSON.parse(raw) : []; }catch(e){ contacts = []; } }
 
 function renderContacts(){
   const list = document.getElementById('contactsList');
-  if(contacts.length === 0){
-    list.innerHTML = '<div class="empty">No contacts yet — add your OB, doula, or family above.</div>';
-    return;
-  }
+  if(contacts.length === 0){ list.innerHTML = '<div class="empty">No contacts yet — add your OB, doula, or family above.</div>'; return; }
   list.innerHTML = contacts.map(c => {
     const telHref = 'tel:' + c.phone.replace(/[^0-9+]/g, '');
     const smsHref = 'sms:' + c.phone.replace(/[^0-9+]/g, '');
-    return `
-      <div class="contact-card">
-        <div class="contact-top">
-          <div>
-            <div class="contact-name">${escapeHtml(c.name)}</div>
-            ${c.label ? `<div class="contact-label">${escapeHtml(c.label)}</div>` : ''}
-          </div>
-          <button class="contact-del" onclick="deleteContact(${c.id})">remove</button>
-        </div>
-        <div class="contact-actions">
-          <a class="action-btn call-btn" href="${telHref}">📞 Call</a>
-          <a class="action-btn text-action-btn" href="${smsHref}">💬 Text</a>
-        </div>
-      </div>
-    `;
+    return `<div class="contact-card"><div class="contact-top"><div><div class="contact-name">${escapeHtml(c.name)}</div>${c.label ? `<div class="contact-label">${escapeHtml(c.label)}</div>` : ''}</div><button class="contact-del" onclick="deleteContact(${c.id})">remove</button></div><div class="contact-actions"><a class="action-btn call-btn" href="${telHref}">📞 Call</a><a class="action-btn text-action-btn" href="${smsHref}">💬 Text</a></div></div>`;
   }).join('');
 }
 
@@ -634,26 +700,61 @@ document.getElementById('addContactBtn').addEventListener('click', () => {
   const name = document.getElementById('contactName').value.trim();
   const label = document.getElementById('contactLabel').value.trim();
   const phone = document.getElementById('contactPhone').value.trim();
-  if(!name || !phone){
-    alert('Please enter at least a name and phone number.');
-    return;
-  }
+  if(!name || !phone){ alert('Please enter at least a name and phone number.'); return; }
   contacts.unshift({ id: Date.now(), name, label, phone });
-  document.getElementById('contactName').value = '';
-  document.getElementById('contactLabel').value = '';
-  document.getElementById('contactPhone').value = '';
-  saveContacts();
-  renderContacts();
+  document.getElementById('contactName').value = ''; document.getElementById('contactLabel').value = ''; document.getElementById('contactPhone').value = '';
+  saveContactsCache(); renderContacts();
+  queuePush('contacts', contacts);
 });
 
 function deleteContact(id){
   contacts = contacts.filter(c => c.id !== id);
-  saveContacts();
-  renderContacts();
+  saveContactsCache(); renderContacts();
+  queuePush('contacts', contacts);
 }
 
-loadContacts();
-renderContacts();
+function applyRemoteContacts(remoteContacts){
+  if(!remoteContacts || pushQueue.contacts) return;
+  const localStr = JSON.stringify(contacts);
+  const remoteStr = JSON.stringify(remoteContacts);
+  if(localStr === remoteStr) return;
+  contacts = remoteContacts;
+  saveContactsCache(); renderContacts();
+}
+
+/* ===================== TAB / PAGER NAVIGATION ===================== */
+const pager = document.getElementById('pager');
+const tabs = document.querySelectorAll('.tab');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const idx = parseInt(tab.dataset.idx, 10);
+    pager.scrollTo({ left: idx * pager.clientWidth, behavior: 'smooth' });
+  });
+});
+let scrollTimeout;
+pager.addEventListener('scroll', () => {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    const idx = Math.round(pager.scrollLeft / pager.clientWidth);
+    tabs.forEach((t, i) => t.classList.toggle('active', i === idx));
+  }, 60);
+});
+
+/* ===================== LAUNCH ===================== */
+function launchApp(){
+  appRoot.style.display = 'flex';
+  loadTimerCache(); loadPackCache(); loadContactsCache();
+  renderTimer(); renderPacking(); renderContacts();
+  if(activeStart){
+    bigBtn.classList.add('active'); btnLabel.textContent = 'STOP'; btnSub.textContent = 'tap when it eases off';
+    elapsedDisplay.style.display = 'block'; startTicking();
+  }
+  setSyncStatus('syncing');
+  pollRemote();
+  startPolling();
+}
+
+initLockScreen();
 </script>
 </body>
 </html>
